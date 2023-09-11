@@ -1,4 +1,4 @@
-docflux-backend/pdf-sore/*
+docflux-backend/pdf-store/*.pdf
 docflux-backend/dist
 docflux-backend/node_modules
 docflux-frontend/node_modules

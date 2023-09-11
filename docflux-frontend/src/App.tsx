@@ -6,11 +6,12 @@ import {
   theme,
   Container,
   Button,
-  Spinner
+  Spinner,
+  Select
 } from "@chakra-ui/react"
 import { ColorModeSwitcher } from "./ColorModeSwitcher"
 import { Input } from '@chakra-ui/react'
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 const API_URL = "http://localhost:8000"
 
@@ -20,12 +21,33 @@ type CustomerInfo = {
   email: string;
 }
 
+type Template = {
+  uuid: string;
+  title: string;
+}
+
+const inputStyle = { margin: 10 }
+
 export const App = () => {
   const [name, setName] = useState<string>("");
   const [address, setAddress] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [spinnerOn, setSpinnerOn] = useState<boolean>(false)
   const [downloadReady, setDownloadReady] = useState<boolean>(false)
+  const [templates, setTemplates] = useState<Template[]>([])
+
+  useEffect(() => {
+    const fetchTemplates = async () => {
+      if (templates.length === 0) {
+        const req = await fetch(API_URL + '/templates', {
+          method: 'GET',
+        })
+        const reqTemplates: Template[] = await req.json()
+        setTemplates(reqTemplates)
+      }
+    }
+    fetchTemplates()
+  }, [])
 
   const sendCustomerInfo = async (customerInfo: CustomerInfo) => {
     setSpinnerOn(true)
@@ -48,7 +70,7 @@ export const App = () => {
   }
 
   const fetchPdfAndDownload = async () => {
-    const res = await fetch(API_URL + "/download-pdf", {
+    const res: Response = await fetch(API_URL + "/download-pdf", {
       method: 'GET'
     })
     const blob = await res.blob()
@@ -63,10 +85,15 @@ export const App = () => {
           <ColorModeSwitcher justifySelf="flex-end" />
           <VStack spacing={8}>
             <Container>
-              <Input placeholder="Name" onChange={(e) => setName(e.target.value)} />
-              <Input placeholder="Address" onChange={(e) => setAddress(e.target.value)} />
-              <Input placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
-              <Button onClick={() => sendCustomerInfo({
+              <Input style={inputStyle} placeholder="Name" onChange={(e) => setName(e.target.value)} />
+              <Input style={inputStyle} placeholder="Address" onChange={(e) => setAddress(e.target.value)} />
+              <Input style={inputStyle} placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
+              <Select style={inputStyle} placeholder="Select template">
+                {templates.length > 0 &&
+                  templates.map(t => <option key={t.uuid} value={t.uuid}>{t.title}</option>)
+                }
+              </Select>
+              <Button style={inputStyle} onClick={() => sendCustomerInfo({
                 name: name,
                 address: address,
                 email: email

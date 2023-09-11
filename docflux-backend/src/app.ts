@@ -8,6 +8,11 @@ export type CustomerInfo = {
   email: string;
 }
 
+type Template = {
+  uuid: string;
+  title: string;
+}
+
 const app = express();
 
 app.use(cors())
@@ -22,6 +27,17 @@ app.get('/', (req, res) => {
 app.get('/download-pdf', (req, res) => {
   res.download(PDF_STORE_PATH + '/customer-info.pdf')
 })
+
+app.get('/templates', (req, res) => {
+  res.setHeader('Content-Type', 'application/json')
+  const templates: Template[] = [ 
+    { uuid: "1111", title: 'Private Customers 2023 - Finnish' },
+    { uuid: "2222", title: 'Corporate Customers 2023 - Finnish' }
+  ]
+  res.send(JSON.stringify(templates))
+})
+
+
 
 app.post('/create-pdf', (req, res) => {
   const customerInfo: CustomerInfo = req.body
