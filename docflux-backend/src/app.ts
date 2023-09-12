@@ -1,17 +1,8 @@
 import express from 'express';
 import cors from 'cors'
 import { createPdf, PDF_STORE_PATH } from './pdf-creater';
-
-export type CustomerInfo = {
-  name: string;
-  address: string;
-  email: string;
-}
-
-type Template = {
-  uuid: string;
-  title: string;
-}
+import { mockTemplates } from './mockData';
+import { Template, OrderDto } from './types';
 
 const app = express();
 
@@ -25,23 +16,18 @@ app.get('/', (req, res) => {
 });
 
 app.get('/download-pdf', (req, res) => {
-  res.download(PDF_STORE_PATH + '/customer-info.pdf')
+  res.download(PDF_STORE_PATH + '/contract.pdf')
 })
 
 app.get('/templates', (req, res) => {
   res.setHeader('Content-Type', 'application/json')
-  const templates: Template[] = [ 
-    { uuid: "1111", title: 'Private Customers 2023 - Finnish' },
-    { uuid: "2222", title: 'Corporate Customers 2023 - Finnish' }
-  ]
+  const templates: Template[] = mockTemplates
   res.send(JSON.stringify(templates))
 })
 
-
-
 app.post('/create-pdf', (req, res) => {
-  const customerInfo: CustomerInfo = req.body
-  createPdf(customerInfo)
+  const order: OrderDto = req.body
+  createPdf(order)
   res.sendStatus(200)
 })
 
