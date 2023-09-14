@@ -1,0 +1,44 @@
+type Query {
+  hello: String
+  allTemplates: [Template]
+}
+
+type Mutation {
+  addTemplate(input: AddTemplateInput!): Template!
+}
+
+input AddTemplateInput {
+  title: String
+  pdf_filename: String
+}
+
+type Template {
+  id: ID!
+  title: String!
+  pdf_filename: String!
+}
+
+type OrderDto {
+  customerInfo: CustomerInfo
+  orderInfo: OrderInfo
+}
+
+type CustomerInfo {
+  name: String!
+  company: String
+  addressOne: String!
+  addressTwo: String
+  email: String
+}
+
+type OrderInfo {
+  performer: String!
+  location: String!
+  timeOfDelivery: String!
+  timeInfo: String
+  delivery: String!
+  priceEuro: Float!
+  priceInfo: String
+  otherOne: String
+  otherTwo: String
+}

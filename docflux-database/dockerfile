@@ -1,0 +1,4 @@
+FROM postgres
+ENV POSTGRES_PASSWORD postgres
+ENV POSTGRES_DB docflux-databse
+COPY create-tables.sql /docker-entrypoint-initdb.d/

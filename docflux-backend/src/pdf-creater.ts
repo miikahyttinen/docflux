@@ -1,6 +1,6 @@
-import { PDFDocument, PDFPage, StandardFonts } from 'pdf-lib'
+import { PDFDocument, PDFPage } from 'pdf-lib'
 import fs from 'fs/promises';
-import { CustomerInfo, OrderDto, OrderInfo } from './types';
+import { OrderDto, OrderInfo, CustomerInfo } from './generated/graphql-types';
 
 export const PDF_STORE_PATH = "./pdf-store"
 
@@ -15,6 +15,8 @@ export const createPdf = async (order: OrderDto) => {
     const firstPage = pages[0]
     writeCustomerInfo(firstPage, order.customerInfo)
     writeOrderInfo(firstPage, order.orderInfo)
+    writeSignaturePlaceholders(firstPage, order.customerInfo)
+    writeContractDate(firstPage)
     const pdfBytes = await pdfDoc.save()
     await fs.writeFile(PDF_STORE_PATH + "/contract.pdf", pdfBytes)
 }
@@ -112,3 +114,27 @@ const writeCustomerInfo = (page: PDFPage, customerInfo: CustomerInfo) => {
     })
 }
 
+const writeSignaturePlaceholders = (page: PDFPage, customerInfo: CustomerInfo) => {
+    const { width, height } = page.getSize()
+    page.drawText(customerInfo.company ? customerInfo.company : customerInfo.name, {
+        x: (width * 0.1175),
+        y: (height * 0.27),
+        size: 12
+    })
+    page.drawText(customerInfo.name, {
+        x: (width * 0.1175),
+        y: (height * 0.209),
+        size: 12
+    })    
+}
+
+const writeContractDate = (page: PDFPage) => {
+    const today = new Date()
+    const date = parseFinnishDate(today.toISOString())
+    const { width, height } = page.getSize()
+    page.drawText(date, {
+        x: (width * 0.73),
+        y: (height * 0.85),
+        size: 12
+    })  
+}

@@ -13,76 +13,71 @@ import {
   Tabs,
   TabPanel,
   TabPanels,
-  NumberInput
-} from "@chakra-ui/react"
-import { ColorModeSwitcher } from "./ColorModeSwitcher"
-import { Input } from '@chakra-ui/react'
-import { useState, useEffect } from "react"
-import { CustomerInfo, OrderDto, Template } from "./types"
+} from "@chakra-ui/react";
+import { ColorModeSwitcher } from "./ColorModeSwitcher";
+import { Input } from "@chakra-ui/react";
+import { useState, useEffect } from "react";
+import { useQuery } from "@apollo/client";
+import { ALL_TEMPLATES_QUERY } from "./graphql-operations";
+import { OrderDto } from "./generated/graphql-types";
 
-const API_URL = "http://localhost:8000"
+const API_URL = "http://localhost:8000";
 
-const inputStyle = { margin: 10 }
+const inputStyle = { margin: 10 };
 
 export const App = () => {
   const [name, setName] = useState<string>("");
-  const [company, setComapny] = useState<string | undefined>(undefined)
-  const [addressOne, setAddressOne] = useState<string>("")
-  const [addressTwo, setAddressTwo] = useState<string>("")
+  const [company, setComapny] = useState<string | undefined>(undefined);
+  const [addressOne, setAddressOne] = useState<string>("");
+  const [addressTwo, setAddressTwo] = useState<string>("");
   const [email, setEmail] = useState<string>("");
-  const [spinnerOn, setSpinnerOn] = useState<boolean>(false)
-  const [downloadReady, setDownloadReady] = useState<boolean>(false)
-  const [templates, setTemplates] = useState<Template[]>([])
+  const [spinnerOn, setSpinnerOn] = useState<boolean>(false);
+  const [downloadReady, setDownloadReady] = useState<boolean>(false);
 
   const [performer, setPerformer] = useState<string>("");
   const [location, setLocation] = useState<string>("");
-  const [timeOfDelivery, setTimeOfDelivery] = useState<string>("")
-  const [timeInfo, setTimeInfo] = useState<string | undefined>(undefined)
-  const [delivery, setDelivery] = useState<string>("")
-  const [priceEuro, setPriceEuro] = useState<number>(0)
-  const [priceInfo, setPriceInfo] = useState<string | undefined>(undefined)
-  const [otherOne, setOtherOne] = useState<string | undefined>(undefined)
-  const [otherTwo, setOtherTwo] = useState<string | undefined>(undefined)
+  const [timeOfDelivery, setTimeOfDelivery] = useState<string>("");
+  const [timeInfo, setTimeInfo] = useState<string | undefined>(undefined);
+  const [delivery, setDelivery] = useState<string>("");
+  const [priceEuro, setPriceEuro] = useState<number>(0);
+  const [priceInfo, setPriceInfo] = useState<string | undefined>(undefined);
+  const [otherOne, setOtherOne] = useState<string | undefined>(undefined);
+  const [otherTwo, setOtherTwo] = useState<string | undefined>(undefined);
 
-  useEffect(() => {
-    const fetchTemplates = async () => {
-      const req = await fetch(API_URL + '/templates', {
-        method: 'GET',
-      })
-      const reqTemplates: Template[] = await req.json()
-      setTemplates(reqTemplates)
-    }
-    fetchTemplates()
-  }, [])
+
+
+  const allTemplatesQuery = useQuery(ALL_TEMPLATES_QUERY)
+
+  console.log()
 
   const sendOrder = async (order: OrderDto) => {
-    setSpinnerOn(true)
+    setSpinnerOn(true);
     const res = await fetch(API_URL + "/create-pdf", {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(order)
-    })
+      body: JSON.stringify(order),
+    });
     if (res.status === 200) {
-      setSpinnerOn(false)
-      setDownloadReady(true)
+      setSpinnerOn(false);
+      setDownloadReady(true);
     } else {
-      console.log("asdf")
-      setSpinnerOn(false)
-      setDownloadReady(false)
+      console.log("asdf");
+      setSpinnerOn(false);
+      setDownloadReady(false);
     }
-  }
+  };
 
   const fetchPdfAndDownload = async () => {
     const res: Response = await fetch(API_URL + "/download-pdf", {
-      method: 'GET'
-    })
-    const blob = await res.blob()
+      method: "GET",
+    });
+    const blob = await res.blob();
     var file = window.URL.createObjectURL(blob);
-    window.open(file, '_blank');
-  }
+    window.open(file, "_blank");
+  };
 
   return (
     <ChakraProvider theme={theme}>
@@ -98,62 +93,136 @@ export const App = () => {
               <TabPanels>
                 <TabPanel>
                   <Container>
-                    <Input style={inputStyle} placeholder="Name" onChange={(e) => setName(e.target.value)} />
-                    <Input style={inputStyle} placeholder="Company (optional)" onChange={(e) => setComapny(e.target.value)} />
-                    <Input style={inputStyle} placeholder="Address Row 1" onChange={(e) => setAddressOne(e.target.value)} />
-                    <Input style={inputStyle} placeholder="Address Row 2" onChange={(e) => setAddressTwo(e.target.value)} />
-                    <Input style={inputStyle} placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
+                    <Input
+                      style={inputStyle}
+                      placeholder="Name"
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                    <Input
+                      style={inputStyle}
+                      placeholder="Company (optional)"
+                      onChange={(e) => setComapny(e.target.value)}
+                    />
+                    <Input
+                      style={inputStyle}
+                      placeholder="Address Row 1"
+                      onChange={(e) => setAddressOne(e.target.value)}
+                    />
+                    <Input
+                      style={inputStyle}
+                      placeholder="Address Row 2"
+                      onChange={(e) => setAddressTwo(e.target.value)}
+                    />
+                    <Input
+                      style={inputStyle}
+                      placeholder="Email"
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
                   </Container>
                 </TabPanel>
                 <TabPanel>
                   <Container>
-                    <Input style={inputStyle} placeholder="Performer" onChange={(e) => setPerformer(e.target.value)} />
-                    <Input style={inputStyle} placeholder="Location" onChange={(e) => setLocation(e.target.value)} />
-                    <Input style={inputStyle} placeholder="Time of Delivery" type={"date"} onChange={(e) => setTimeOfDelivery(new Date(e.target.value).toISOString())} />
-                    <Input style={inputStyle} placeholder="Time Info (optional)" onChange={(e) => setTimeInfo(e.target.value)} />
-                    <Input style={inputStyle} placeholder="Delivery" onChange={(e) => setDelivery(e.target.value)} />
-                    <Input style={inputStyle} type="number" placeholder="Price (€)" onChange={(e) => setPriceEuro(Number(e.target.value))} />
-                    <Input style={inputStyle} placeholder="Price Info (optional)" onChange={(e) => setPriceInfo(e.target.value)} />
-                    <Input style={inputStyle} placeholder="Other row one (optional)" onChange={(e) => setOtherOne(e.target.value)} />
-                    <Input style={inputStyle} placeholder="Other row two (optional)" onChange={(e) => setOtherTwo(e.target.value)} />
+                    <Input
+                      style={inputStyle}
+                      placeholder="Performer"
+                      onChange={(e) => setPerformer(e.target.value)}
+                    />
+                    <Input
+                      style={inputStyle}
+                      placeholder="Location"
+                      onChange={(e) => setLocation(e.target.value)}
+                    />
+                    <Input
+                      style={inputStyle}
+                      placeholder="Time of Delivery"
+                      type={"date"}
+                      onChange={(e) =>
+                        setTimeOfDelivery(
+                          new Date(e.target.value).toISOString()
+                        )
+                      }
+                    />
+                    <Input
+                      style={inputStyle}
+                      placeholder="Time Info (optional)"
+                      onChange={(e) => setTimeInfo(e.target.value)}
+                    />
+                    <Input
+                      style={inputStyle}
+                      placeholder="Delivery"
+                      onChange={(e) => setDelivery(e.target.value)}
+                    />
+                    <Input
+                      style={inputStyle}
+                      type="number"
+                      placeholder="Price (€)"
+                      onChange={(e) => setPriceEuro(Number(e.target.value))}
+                    />
+                    <Input
+                      style={inputStyle}
+                      placeholder="Price Info (optional)"
+                      onChange={(e) => setPriceInfo(e.target.value)}
+                    />
+                    <Input
+                      style={inputStyle}
+                      placeholder="Other row one (optional)"
+                      onChange={(e) => setOtherOne(e.target.value)}
+                    />
+                    <Input
+                      style={inputStyle}
+                      placeholder="Other row two (optional)"
+                      onChange={(e) => setOtherTwo(e.target.value)}
+                    />
                   </Container>
                 </TabPanel>
               </TabPanels>
             </Tabs>
             <Container>
-              <Select style={inputStyle} placeholder="Select template">
-                {templates.length > 0 &&
-                  templates.map(t => <option key={t.uuid} value={t.uuid}>{t.title}</option>)
+              {<Select style={inputStyle} placeholder="Select template">
+                {!allTemplatesQuery.loading &&
+                  allTemplatesQuery.data.allTemplates.map((t: any) => (
+                    <option key={t.id} value={t.uuid}>
+                      {t.title}
+                    </option>
+                  ))}
+                  </Select>}
+              <Button
+                style={inputStyle}
+                onClick={() =>
+                  sendOrder({
+                    orderInfo: {
+                      performer: performer,
+                      location: location,
+                      timeOfDelivery: timeOfDelivery,
+                      timeInfo: timeInfo,
+                      delivery: delivery,
+                      priceEuro: priceEuro,
+                      priceInfo: priceInfo,
+                      otherOne: otherOne,
+                      otherTwo: otherTwo,
+                    },
+                    customerInfo: {
+                      name: name,
+                      company: company,
+                      addressOne: addressOne,
+                      addressTwo: addressTwo,
+                      email: email,
+                    },
+                  })
                 }
-              </Select>
-              <Button style={inputStyle} onClick={() => sendOrder(
-                {
-                  orderInfo: {
-                    performer: performer,
-                    location: location,
-                    timeOfDelivery: timeOfDelivery,
-                    timeInfo: timeInfo,
-                    delivery: delivery,
-                    priceEuro: priceEuro,
-                    priceInfo: priceInfo,
-                    otherOne: otherOne,
-                    otherTwo: otherTwo
-                  },
-                  customerInfo: {
-                    name: name,
-                    company: company,
-                    addressOne: addressOne,
-                    addressTwo: addressTwo,
-                    email: email
-                  }
-                })}
-
-              >{spinnerOn ? <Spinner /> : "Submit"}</Button>
-              <Button isDisabled={!downloadReady} onClick={() => fetchPdfAndDownload()}>Download</Button>
+              >
+                {spinnerOn ? <Spinner /> : "Submit"}
+              </Button>
+              <Button
+                isDisabled={!downloadReady}
+                onClick={() => fetchPdfAndDownload()}
+              >
+                Download
+              </Button>
             </Container>
           </VStack>
         </Grid>
       </Box>
     </ChakraProvider>
-  )
-}
+  );
+};
