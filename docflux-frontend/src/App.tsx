@@ -17,9 +17,9 @@ import {
 import { ColorModeSwitcher } from "./ColorModeSwitcher";
 import { Input } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
-import { useQuery } from "@apollo/client";
-import { ALL_TEMPLATES_QUERY } from "./graphql-operations";
-import { OrderDto } from "./generated/graphql-types";
+import { useQuery, useMutation } from "@apollo/client";
+import { ADD_ORDER_MUTATION, ALL_TEMPLATES_QUERY } from "./graphql-operations";
+import { AddOrderInput } from "./generated/graphql-types";
 
 const API_URL = "http://localhost:8000";
 
@@ -44,30 +44,20 @@ export const App = () => {
   const [otherOne, setOtherOne] = useState<string | undefined>(undefined);
   const [otherTwo, setOtherTwo] = useState<string | undefined>(undefined);
 
+  const [addOrder, { data, loading, error }] = useMutation(ADD_ORDER_MUTATION);
 
+  const allTemplatesQuery = useQuery(ALL_TEMPLATES_QUERY);
 
-  const allTemplatesQuery = useQuery(ALL_TEMPLATES_QUERY)
-
-  console.log()
-
-  const sendOrder = async (order: OrderDto) => {
-    setSpinnerOn(true);
-    const res = await fetch(API_URL + "/create-pdf", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(order),
-    });
-    if (res.status === 200) {
+  const sendOrder = async (order: AddOrderInput) => {
+    addOrder({ variables: { input: order } })
+    /*if (res.status === 200) {
       setSpinnerOn(false);
       setDownloadReady(true);
     } else {
       console.log("asdf");
       setSpinnerOn(false);
       setDownloadReady(false);
-    }
+    }*/
   };
 
   const fetchPdfAndDownload = async () => {
@@ -178,14 +168,16 @@ export const App = () => {
               </TabPanels>
             </Tabs>
             <Container>
-              {<Select style={inputStyle} placeholder="Select template">
-                {!allTemplatesQuery.loading &&
-                  allTemplatesQuery.data.allTemplates.map((t: any) => (
-                    <option key={t.id} value={t.uuid}>
-                      {t.title}
-                    </option>
-                  ))}
-                  </Select>}
+              {
+                <Select style={inputStyle} placeholder="Select template">
+                  {!allTemplatesQuery.loading &&
+                    allTemplatesQuery.data.allTemplates.map((t: any) => (
+                      <option key={t.id} value={t.uuid}>
+                        {t.title}
+                      </option>
+                    ))}
+                </Select>
+              }
               <Button
                 style={inputStyle}
                 onClick={() =>

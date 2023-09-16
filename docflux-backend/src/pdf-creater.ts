@@ -1,13 +1,13 @@
 import { PDFDocument, PDFPage } from 'pdf-lib'
 import fs from 'fs/promises';
-import { OrderDto, OrderInfo, CustomerInfo } from './generated/graphql-types';
+import { AddOrderInput, OrderInfo, CustomerInfo } from './generated/graphql-types';
 
 export const PDF_STORE_PATH = "./pdf-store"
 
 const ROW_SIZE = 0.015
 
 
-export const createPdf = async (order: OrderDto) => {
+export const createPdf = async (order: AddOrderInput) => {
     const existingPdfBytes = await fs.readFile("./pdf-templates/contract.pdf");
 
     const pdfDoc = await PDFDocument.load(existingPdfBytes)

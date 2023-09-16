@@ -1,15 +1,21 @@
 type Query {
-  hello: String
+  allOrders: [Order]
   allTemplates: [Template]
 }
 
 type Mutation {
   addTemplate(input: AddTemplateInput!): Template!
+  addOrder(input: AddOrderInput!): Order!  
 }
 
 input AddTemplateInput {
   title: String
   pdf_filename: String
+}
+
+input AddOrderInput {
+  customerInfo: CustomerInfoInput!
+  orderInfo: OrderInfoInput!
 }
 
 type Template {
@@ -18,9 +24,10 @@ type Template {
   pdf_filename: String!
 }
 
-type OrderDto {
-  customerInfo: CustomerInfo
-  orderInfo: OrderInfo
+type Order {
+  id: ID!
+  orderInfo: OrderInfo!
+  customerInfo: CustomerInfo!
 }
 
 type CustomerInfo {
@@ -29,6 +36,26 @@ type CustomerInfo {
   addressOne: String!
   addressTwo: String
   email: String
+}
+
+input CustomerInfoInput {
+  name: String!
+  company: String
+  addressOne: String!
+  addressTwo: String
+  email: String
+}
+
+input OrderInfoInput {
+  performer: String!
+  location: String!
+  timeOfDelivery: String!
+  timeInfo: String
+  delivery: String!
+  priceEuro: Float!
+  priceInfo: String
+  otherOne: String
+  otherTwo: String
 }
 
 type OrderInfo {

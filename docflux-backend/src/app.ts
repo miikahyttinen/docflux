@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { createPdf, PDF_STORE_PATH } from "./pdf-creater";
-import { OrderDto, Template } from "./generated/graphql-types";
+import { AddOrderInput, Template } from "./generated/graphql-types";
 import resolvers from "./resolvers";
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
@@ -22,6 +22,12 @@ app.get("/download-pdf", (req, res) => {
   res.download(PDF_STORE_PATH + "/contract.pdf");
 });
 
+/*app.post("/create-pdf", (req, res) => {
+    const order: OrderDto = req.body as OrderDto;
+    createPdf(order);
+    res.sendStatus(200);
+});*/
+
 const httpServer = http.createServer(app);
 
 const server = new ApolloServer({
@@ -35,26 +41,12 @@ async function start(): Promise<void> {
 }
 
 start().then(() => {
-
   // middleware
   app.use(cors(), express.json(), expressMiddleware(server));
 
   const PORT = 8000;
 
-  /*app.get('/templates', (req, res) => {
-  res.setHeader('Content-Type', 'application/json')
-  const templates: Template[] = mockTemplates
-  res.send(JSON.stringify(templates))
-})*/
-
-  /*app.post("/create-pdf", (req, res) => {
-    const order: OrderDto = req.body as OrderDto;
-    createPdf(order);
-    res.sendStatus(200);
-  });*/
-
   app.listen(PORT, () => {
     return console.log(`Express is listening at http://localhost:${PORT}`);
   });
-
 });

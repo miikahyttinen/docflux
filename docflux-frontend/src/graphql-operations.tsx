@@ -9,3 +9,11 @@ export const ALL_TEMPLATES_QUERY = gql`
     }
   }
 `;
+
+export const ADD_ORDER_MUTATION = gql`
+  mutation AddOrder($input: AddOrderInput!) {
+    addOrder(input: $input) {
+      id
+    }
+  }
+`;

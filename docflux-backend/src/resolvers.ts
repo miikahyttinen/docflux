@@ -1,4 +1,4 @@
-import { AddTemplateInput, Template } from './generated/graphql-types';
+import { AddOrderInput, AddTemplateInput, Order, Template } from './generated/graphql-types';
 import { v4 as uuidv4 } from 'uuid';
 
 export const templates: Template[] = [
@@ -6,9 +6,11 @@ export const templates: Template[] = [
     { id: "2", title: 'Corporate Customers 2023 - Finnish', pdf_filename: 'contract.pdf' }
 ]
 
+export const orders: Order[] = []
+
 const resolvers = {
   Query: {
-    hello: () => 'Hello world!',
+    allOrders: () => orders,
     allTemplates: () => templates 
   },
   Mutation: {
@@ -18,6 +20,12 @@ const resolvers = {
       templates.push(template);
       return template;
     },
+    addOrder: (_parent, { input }: { input: AddOrderInput }): Order => {
+        const id = String(uuidv4());
+        const order: Order = { id: id, orderInfo: input.orderInfo, customerInfo: input.customerInfo }   
+        orders.push(order)
+        return order
+    }
   },
 };
 
