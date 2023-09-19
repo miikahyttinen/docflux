@@ -1,12 +1,15 @@
 import express from "express";
 import cors from "cors";
-import { createPdf, PDF_STORE_PATH } from "./pdf-creater";
-import { AddOrderInput, Template } from "./generated/graphql-types";
+import { PDF_STORE_PATH } from "./pdf-creater";
 import resolvers from "./resolvers";
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import http from "http";
+import { MongoClient } from "mongodb";
+
+const MONGO_CONNECTION_STRING = "mongodb://root:rootpassword@localhost:27017/";
+export let DB_CONN;
 
 const typeDefs = `
   #graphql
@@ -40,9 +43,16 @@ async function start(): Promise<void> {
   await server.start();
 }
 
-start().then(() => {
+start().then(async () => {
   // middleware
   app.use(cors(), express.json(), expressMiddleware(server));
+
+  console.log("STEP 1");
+
+  const client = new MongoClient(MONGO_CONNECTION_STRING, {});
+  DB_CONN = await client.connect();
+
+  console.log("STEP 2");
 
   const PORT = 8000;
 

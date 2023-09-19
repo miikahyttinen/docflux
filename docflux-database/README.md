@@ -1,1 +1,1 @@
-docker build -t docflux-database ./
+`docker compose up -d`

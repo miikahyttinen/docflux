@@ -21,23 +21,21 @@ export const App = () => {
   return (
     <ChakraProvider theme={theme}>
       <Box textAlign="center" fontSize="xl">
-        <Grid minH="100vh" p={3}>
-          <ColorModeSwitcher justifySelf="flex-end" />
-          <Tabs>
-            <TabList>
-              <Tab>Orders</Tab>
-              <Tab>New Order</Tab>
-            </TabList>
-            <TabPanels>
-              <TabPanel>
-                <OrderList />
-              </TabPanel>
-              <TabPanel>
-                <OrderForm />
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
-        </Grid>
+        <ColorModeSwitcher justifySelf="flex-end" />
+        <Tabs>
+          <TabList>
+            <Tab>Orders</Tab>
+            <Tab>New Order</Tab>
+          </TabList>
+          <TabPanels>
+            <TabPanel>
+              <OrderList />
+            </TabPanel>
+            <TabPanel>
+              <OrderForm />
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
       </Box>
     </ChakraProvider>
   );

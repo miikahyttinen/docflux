@@ -5,7 +5,7 @@ type Query {
 
 type Mutation {
   addTemplate(input: AddTemplateInput!): Template!
-  addOrder(input: AddOrderInput!): Order!  
+  addOrder(input: AddOrderInput!): Order!
 }
 
 input AddTemplateInput {
