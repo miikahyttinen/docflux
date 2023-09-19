@@ -1,6 +1,8 @@
 docflux-backend/pdf-store/*.pdf
-docflux-backend/dist
-docflux-backend/node_modules
-docflux-frontend/node_modules
+docflux-backend/pdf-templates
+docflux-backend/dist/
+docflux-backend/coverage/
+docflux-backend/node_modules/
+docflux-frontend/node_modules/
 */.DS_Store
 .DS_Store
